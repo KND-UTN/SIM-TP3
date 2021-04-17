@@ -1,7 +1,5 @@
 package pruebasBondad;
-
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
-
 import java.util.ArrayList;
 
 public class ChiCuadrado {

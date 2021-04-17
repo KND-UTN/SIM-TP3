@@ -13,4 +13,7 @@ public interface Distribucion {
     // obtuvieron con el metodo generarValorExtra, todo en un ArrayList
     public ArrayList<Double> getValores();
 
+    public ArrayList<Double> calcularFo(ArrayList<Double> intervalos);
+
+    public ArrayList<Double> calcularFe(ArrayList<Double> intervalos);
 }
