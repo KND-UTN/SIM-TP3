@@ -1,4 +1,6 @@
 package distribuciones;
+import Intervalo.Intervalo;
+
 import java.util.ArrayList;
 
 public class Poisson implements Distribucion {
@@ -18,12 +20,18 @@ public class Poisson implements Distribucion {
     }
 
     @Override
-    public ArrayList<Double> calcularFo(ArrayList<Double> intervalos) {
+    public double[] calcularFo(Intervalo intervalos) throws Exception {
         return null;
     }
 
     @Override
-    public ArrayList<Double> calcularFe(ArrayList<Double> intervalos) {
+    public double[] calcularFe(Intervalo intervalos) throws Exception {
         return null;
+    }
+
+    @Override
+    public int getDatosEmpiricos() {
+        return 0;
+        // TODO: Corregir esto, Poisson NO tiene 0 datos empiricos (Creo) - Igna
     }
 }

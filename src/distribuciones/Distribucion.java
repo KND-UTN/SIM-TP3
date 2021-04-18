@@ -1,8 +1,9 @@
 package distribuciones;
+import Intervalo.Intervalo;
+
 import java.util.ArrayList;
 
 public interface Distribucion {
-
     // Devuelve N valores que correspondan con la distribucion elegida
     public ArrayList<Double> generarValores(int cant);
 
@@ -13,7 +14,12 @@ public interface Distribucion {
     // obtuvieron con el metodo generarValorExtra, todo en un ArrayList
     public ArrayList<Double> getValores();
 
-    public ArrayList<Double> calcularFo(ArrayList<Double> intervalos);
+    // Calcula las frecuencuas observadas y las devuelve en un arreglo del mismo tamaño que la cantidad de intervalos
+    public double[] calcularFo(Intervalo intervalos) throws Exception ;
 
-    public ArrayList<Double> calcularFe(ArrayList<Double> intervalos);
+    // Calcula las frecuencuas esperadas y las devuelve en un arreglo del mismo tamaño que la cantidad de intervalos
+    public double[] calcularFe(Intervalo intervalos) throws Exception ;
+
+    // Metodo que retorna la cantidad de datos empiricos que tiene la distribucion
+    public int getDatosEmpiricos();
 }

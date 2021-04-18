@@ -1,5 +1,5 @@
 package pruebasBondad;
-import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+//import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import java.util.ArrayList;
 
 public class ChiCuadrado {
@@ -87,9 +87,9 @@ public class ChiCuadrado {
 
         // Esta clase proviene de una libreria de Apache,
         // uno le pasa al constructor los grados de libertad como parametro
-        ChiSquaredDistribution distribucionChi = new ChiSquaredDistribution( gradosLibertad );
+        //ChiSquaredDistribution distribucionChi = new ChiSquaredDistribution( gradosLibertad ); TODO
         // Luego para obtener el valor critico, tenemos que llamar a esta funcion y pasarle como parametro el alpha
-        valorCritico = distribucionChi.inverseCumulativeProbability(1 - alpha);
+        //valorCritico = distribucionChi.inverseCumulativeProbability(1 - alpha); TODO
 
         // Guardamos en la variable si es posible rechazar o no la hipotesis
         rechazada = !(valorCritico > cac);

@@ -1,4 +1,6 @@
 package distribuciones;
+import Intervalo.Intervalo;
+
 import java.util.ArrayList;
 
 public class NormalConvolucion implements Distribucion {
@@ -18,12 +20,19 @@ public class NormalConvolucion implements Distribucion {
     }
 
     @Override
-    public ArrayList<Double> calcularFo(ArrayList<Double> intervalos) {
+    public double[] calcularFo(Intervalo intervalos) throws Exception {
         return null;
     }
 
     @Override
-    public ArrayList<Double> calcularFe(ArrayList<Double> intervalos) {
+    public double[] calcularFe(Intervalo intervalos) throws Exception {
         return null;
     }
+
+    @Override
+    public int getDatosEmpiricos() {
+        return 2;
+    }
+
+
 }
