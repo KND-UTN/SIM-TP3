@@ -1,9 +1,6 @@
 package distribuciones;
-
 import Intervalo.Intervalo;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 public class NormalBoxMuller implements Distribucion {
@@ -29,7 +26,6 @@ public class NormalBoxMuller implements Distribucion {
                 rnd1 = generadorAleatorios.nextDouble();
                 rnd2 = generadorAleatorios.nextDouble();
                 x = (Math.sqrt(-2 * Math.log(rnd1)) * Math.cos(2 * Math.PI * rnd2)) * desviacion + media;
-
             } else {
                 x = (Math.sqrt(-2 * Math.log(rnd1)) * Math.sin(2 * Math.PI * rnd2)) * desviacion + media;
             }

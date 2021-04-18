@@ -1,8 +1,5 @@
 package Intervalo;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class Intervalo {
     // Creación del arreglo que contendrá los intervalos
     double[][] intervalos;

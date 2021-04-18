@@ -1,8 +1,5 @@
 package sample;
-
 import Intervalo.Intervalo;
-
-import java.util.ArrayList;
 
 public class MainPruebas {
     public static void main(String[] args) throws Exception {
