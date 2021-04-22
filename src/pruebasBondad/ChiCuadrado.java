@@ -1,129 +1,98 @@
 package pruebasBondad;
-//import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import java.util.ArrayList;
+import Intervalo.Intervalo;
+
 
 public class ChiCuadrado {
-    double salto;
-    double[] intervalos;
-    double[] fo;            // Frecuencias observadas
-    double[] fe;            // Frecuencias esperadas
-    double[] c;             // Estadistico
-    double cac;             // Estadistico de prueba (C acumulado)
-    double valorCritico;    // Si cac (C acumulado) es mayor al valor critico, es posible rechazar la hipotesis nula
+    ArrayList<Double > c;    // Estadístico
+    double cAc;             // Estadístico de prueba (C acumulado)
+    double valorCritico;    // Si cAc (C acumulado) es mayor al valor crítico, es posible rechazar la hipótesis nula
     boolean rechazada;
 
-    public ChiCuadrado(int cantIntervalos)
-    {
-        // Inicializamos las variables
-        double anterior = 0;
-        intervalos = new double[cantIntervalos];
-        fo = new double[cantIntervalos];
-        fe = new double[cantIntervalos];
-        c = new double[cantIntervalos];
-        salto = 1.0 / cantIntervalos;
+    // Arreglos que luego se mostrarán en las tablas..
+    ArrayList<Double> foAgrupados;
+    ArrayList<Double> feAgrupados;
+    ArrayList<String> intervalosAgrupados;
 
-        // Generamos los intervalos
-        for (int i = 0 ; i < cantIntervalos ; i++)
+    public ChiCuadrado()
+    {
+        // Inicializamos las variables..
+        c = new ArrayList<>();
+        feAgrupados = new ArrayList<>();
+        foAgrupados = new ArrayList<>();
+        intervalosAgrupados = new ArrayList<>();
+    }
+
+    public void procesar(double[] fo, double[] fe, int m, Intervalo intervalos)
+    {
+        // Obtenemos el estadístico acumulado
+        calcularEstadisticoPrueba(fo, fe, intervalos);
+        // Verificamos si se rechaza la hipótesis nula
+        testHipotesis(m);
+    }
+
+    public ArrayList<Double> getFoAgrupados() {
+        return foAgrupados;
+    }
+
+    public ArrayList<Double> getFeAgrupados() {
+        return feAgrupados;
+    }
+
+    public ArrayList<String> getIntervalosAgrupados() {
+        return intervalosAgrupados;
+    }
+
+    private void calcularEstadisticoPrueba(double[] fo, double[] fe, Intervalo intervalos)
+    {
+        double foAcumulada = 0;
+        double feAcumulada = 0;
+        ArrayList<double[]> intervalosAcumulados = new ArrayList<>();
+
+        for (int i=0; i < fe.length; i++)
         {
-            anterior += salto;
-            intervalos[i] = anterior;
-        }
-    }
+            feAcumulada = feAcumulada + fe[i];
+            foAcumulada = foAcumulada + fo[i];
+            intervalosAcumulados.add(intervalos.getIntervalos()[i]);
+            if (feAcumulada >= 5)
+            {
+                // Se van guardando los valores de foAc y feAc para luego mostrarlo en las tablas..
+                foAgrupados.add(foAcumulada);
+                feAgrupados.add(feAcumulada);
+                intervalosAgrupados.add("[" + intervalosAcumulados.get(0)[0] + ", " + intervalosAcumulados.get(intervalosAcumulados.size() - 1)[1] + "]");
 
-    public void procesar(ArrayList<Double> numeros)
-    {
-        // Primero calculamos las frecuencias observadas
-        calcularFO(numeros);
-        // Calculamos las frecuencias esperadas
-        calcularFE(numeros);
-        // Obtenemos el estadistico acumulado
-        calcularEstadisticoPrueba();
-        // Verificamos si se rechaza la hipotesis nula
-        testHipotesis();
-    }
+                intervalosAgrupados.add(intervalosAgrupados.toString());
 
-    // Calcular Frecuencias Observadas
-    private void calcularFO(ArrayList<Double> numeros)
-    {
-        // Vamos metiendo cada numero en el intervalo que corresponde
-        for (double numero : numeros) {
-            for (int i = 0; i < this.intervalos.length; i++) {
-                if (this.intervalos[i] > numero && numero > (this.intervalos[i] - this.salto))
-                {
-                    fo[i]++;
-                    continue;
-                }
+                this.c.add(Math.pow(feAcumulada - foAcumulada, 2)/ feAcumulada);
+                cAc += c.get(c.size() -1);
+
+                feAcumulada = 0;
+                foAcumulada = 0;
+                intervalosAcumulados = new ArrayList<>();
             }
         }
+
+        this.c.add(Math.pow(feAcumulada - foAcumulada, 2)/ feAcumulada);
+        cAc += c.get(c.size() -1);
     }
 
-    // Calcular Frecuencias Esperadas
-    private void calcularFE(ArrayList<Double> numeros)
+    // Método que verifica si se puede rechazar o no la hipótesis nula
+    private void testHipotesis(int m)
     {
-        for (int i = 0 ; i < this.fe.length ; i++)
-        {
-            this.fe[i] = (double) numeros.size() / this.intervalos.length;
-        }
-    }
-
-    private void calcularEstadisticoPrueba()
-    {
-        for (int i = 0 ; i < this.fe.length ; i++)
-        {
-            this.c[i] = ((this.fe[i] - this.fo[i]) * (this.fe[i] - this.fo[i])) / this.fe[i];
-            cac += c[i];
-        }
-    }
-
-    // Este metodo verifica si se puede rechazar o no la hipotesis nula
-    private void testHipotesis()
-    {
-        int gradosLibertad;
-        if (intervalos.length == 1) gradosLibertad = 1;
-        else gradosLibertad = intervalos.length - 1;
+        int gradosLibertad = ((intervalosAgrupados.size() - 1) - m);
         // Con este alpha definimos que existe un riesgo de 5% de concluir que la muestra no se ajusta a la
         // distribución propuesta, cuando en realidad si lo hace.
         double alpha = 0.05;
 
-        // Esta clase proviene de una libreria de Apache,
-        // uno le pasa al constructor los grados de libertad como parametro
-        //ChiSquaredDistribution distribucionChi = new ChiSquaredDistribution( gradosLibertad ); TODO
-        // Luego para obtener el valor critico, tenemos que llamar a esta funcion y pasarle como parametro el alpha
-        //valorCritico = distribucionChi.inverseCumulativeProbability(1 - alpha); TODO
+        // Esta clase proviene de una librería de Apache,
+        // uno le pasa al constructor los grados de libertad como parámetro
+        ChiSquaredDistribution distribucionChi = new ChiSquaredDistribution( gradosLibertad );
+        // Luego para obtener el valor crítico, tenemos que llamar a esta función y pasarle como parámetro el alpha
+        valorCritico = distribucionChi.inverseCumulativeProbability(1 - alpha);
 
-        // Guardamos en la variable si es posible rechazar o no la hipotesis
-        rechazada = !(valorCritico > cac);
+        // Guardamos en la variable si es posible rechazar o no la hipótesis
+        rechazada = !(valorCritico > cAc);
     }
-
-    /**
-     * -------------------------------------------------- GETTERS --------------------------------------------------
-     */
-    public double[] getFrecuenciasObservadas() {
-        return fo;
-    }
-
-    public double[] getFrecuenciasEsperadas() {
-        return fe;
-    }
-
-    public double[] getIntervalos() {
-        return intervalos;
-    }
-
-    public double[] getEstadisticos() {
-        return c;
-    }
-
-    public double getEstadisticoPrueba() {
-        return cac;
-    }
-
-    public boolean isRechazada() {
-        return rechazada;
-    }
-
-    public double getValorCritico() {
-        return valorCritico;
-    }
-
 }
+

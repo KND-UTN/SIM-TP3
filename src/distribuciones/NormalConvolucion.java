@@ -33,6 +33,4 @@ public class NormalConvolucion implements Distribucion {
     public int getDatosEmpiricos() {
         return 2;
     }
-
-
 }
