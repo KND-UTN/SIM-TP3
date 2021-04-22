@@ -73,8 +73,18 @@ public class ChiCuadrado {
             }
         }
 
-        this.c.add(Math.pow(feAcumulada - foAcumulada, 2)/ feAcumulada);
-        cAc += c.get(c.size() -1);
+        if (feAcumulada < 5)
+        {
+            // Se van guardando los valores de foAc y feAc para luego mostrarlo en las tablas..
+            foAgrupados.add(foAcumulada);
+            feAgrupados.add(feAcumulada);
+            intervalosAgrupados.add("[" + intervalosAcumulados.get(0)[0] + ", " + intervalosAcumulados.get(intervalosAcumulados.size() - 1)[1] + "]");
+
+            intervalosAgrupados.add(intervalosAgrupados.toString());
+
+            this.c.add(Math.pow(feAcumulada - foAcumulada, 2)/ feAcumulada);
+            cAc += c.get(c.size() -1);
+        }
     }
 
     // Método que verifica si se puede rechazar o no la hipótesis nula
