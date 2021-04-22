@@ -77,7 +77,7 @@ public class NormalBoxMuller implements Distribucion {
         for (int i = 0 ; i < fe.length ; i++)
         {
             marcaClase = ( intervalos.getIntervalos()[i][0] + intervalos.getIntervalos()[i][1] ) / 2;
-            fe[i] = (1/(this.desviacion*Math.sqrt(2*Math.PI)))*Math.exp((-1.0/2)*(Math.pow(((marcaClase - this.media) / this.desviacion), 2)));
+            fe[i] = (1/(this.desviacion*Math.sqrt(2*Math.PI)))*Math.exp((-1.0/2)*(Math.pow(((marcaClase - this.media) / this.desviacion), 2))) * this.valoresGenerados.size();
         }
         return fe;
     }

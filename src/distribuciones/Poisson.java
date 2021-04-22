@@ -11,6 +11,8 @@ public class Poisson {
     ArrayList<Integer> fe;
     double minimo = Integer.MAX_VALUE;
     double maximo = 0;
+    ArrayList<Integer> valores;
+    Random generadorAleatorios;
 
     double getMinimo(){return minimo;}
 
@@ -24,15 +26,17 @@ public class Poisson {
         return fe;
     }
 
-    ArrayList<Integer> valores;
 
-    Random generadorAleatorios;
 
     public Poisson(double lambda)
     {
         this.lambda = lambda;
         this.valoresGenerados = new ArrayList<>();
         this.generadorAleatorios = new Random();
+        this.frecuenciasObservadasTemporal = new Hashtable<>();
+        this.valores = new ArrayList<>();
+        this.fo = new ArrayList<>();
+        this.fe = new ArrayList<>();
     }
 
     public ArrayList<Integer> generarValores(int cant)
@@ -64,11 +68,15 @@ public class Poisson {
         return valoresGenerados;
     }
 
+    public ArrayList<Integer> getValoresChi() {
+        return valores;
+    }
+
     public void calcularFoFe() {
 
         for (double valor: valoresGenerados)
         {
-            if (frecuenciasObservadasTemporal.contains(valor))
+            if (frecuenciasObservadasTemporal.containsKey((int) valor))
             {
                 frecuenciasObservadasTemporal.put((int) valor, frecuenciasObservadasTemporal.get((int) valor) + 1);
             }
@@ -77,12 +85,14 @@ public class Poisson {
 
         Iterator<Map.Entry<Integer, Integer>> iterador = frecuenciasObservadasTemporal.entrySet().iterator();
 
+        int frecuenciaEsperada;
         while (iterador.hasNext())
         {
             Map.Entry<Integer, Integer> actual = iterador.next();
             valores.add(actual.getKey());
             fo.add(actual.getValue());
-            fe.add((int) Math.round(Math.pow(lambda, actual.getKey()) * Math.exp(-lambda) / ArithmeticUtils.factorial(actual.getKey())) * valoresGenerados.size());
+            frecuenciaEsperada = (int) (Math.pow(lambda, actual.getKey()) * Math.exp(-lambda) / ArithmeticUtils.factorial(actual.getKey()) * valoresGenerados.size());
+            fe.add(frecuenciaEsperada);
         }
     }
 

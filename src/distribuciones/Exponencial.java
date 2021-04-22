@@ -69,7 +69,7 @@ public class Exponencial implements Distribucion {
         {
             limIzquierdo = intervalos.getIntervalos()[i][0];
             limDerecho =  intervalos.getIntervalos()[i][1];
-            fe[i] = (lambda * Math.exp(- lambda * limDerecho)) - (lambda * Math.exp(- lambda * limIzquierdo));
+            fe[i] = ((1 - Math.exp(- lambda * limDerecho)) - (1 - Math.exp(- lambda * limIzquierdo))) * this.valoresGenerados.size();
         }
 
         return fe;

@@ -6,7 +6,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
@@ -19,9 +21,12 @@ import javafx.stage.Stage;
 import pruebasBondad.ChiCuadrado;
 import pruebasBondad.ChiCuadradoPoisson;
 import tablas.*;
+
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class Controller {
@@ -94,6 +99,7 @@ public class Controller {
     ChiCuadradoPoisson chiPoisson;
     ArrayList<Integer> valoresChi;
     ArrayList<Double> valores;
+    Intervalo intervalosChi;
 
     public Controller() {
     }
@@ -169,7 +175,8 @@ public class Controller {
         }
 
         int i = 0;
-        if (this.distribucionNum == 2) {
+        System.out.println(distribucionNum);
+        if (this.distribucionNum != 2) {
             valores = this.distribucion.generarValores(cant);
 
             for (Iterator var8 = valores.iterator(); var8.hasNext(); ++i) {
@@ -179,7 +186,7 @@ public class Controller {
         } else {
             valoresChi = this.distribucionPoisson.generarValores(cant);
 
-            for (Iterator var8 = valores.iterator(); var8.hasNext(); ++i) {
+            for (Iterator var8 = valoresChi.iterator(); var8.hasNext(); ++i) {
                 Integer valor = (Integer) var8.next();
                 this.tblRandoms.getItems().add(new NumRandom(i, String.valueOf((double) ((int) (valor * Math.pow(10.0D, (double) this.cantidadDecimales))) / Math.pow(10.0D, (double) this.cantidadDecimales))));
             }
@@ -267,7 +274,14 @@ public class Controller {
         // Si es Poisson
         if (this.distribucionNum == 2) {
             chiPoisson = new ChiCuadradoPoisson();
-            chiPoisson.calcularEstadisticoPrueba(distribucionPoisson.getValores(), distribucionPoisson.getFo(), distribucionPoisson.getFe());
+            distribucionPoisson.calcularFoFe();
+            System.out.println(distribucionPoisson);
+            System.out.println(distribucionPoisson.getValoresChi());
+            System.out.println(distribucionPoisson.getFe());
+            System.out.println(distribucionPoisson.getFo());
+            System.out.println(distribucionPoisson.getValores());
+
+            chiPoisson.calcularEstadisticoPrueba(distribucionPoisson.getValoresChi(), distribucionPoisson.getFo(), distribucionPoisson.getFe());
             intervalos = chiPoisson.getIntervalosAgrupados();
             frecuenciasO = chiPoisson.getFoAgrupados();
             frecuenciasE = chiPoisson.getFeAgrupados();
@@ -275,17 +289,20 @@ public class Controller {
         }
         // Caso contrario, no es Poisson
         else {
-            Intervalo intervalosChi = new Intervalo(distribucion.getMinimo(), distribucion.getMaximo(), spnIntervalos.getValue().intValue());
+            intervalosChi = new Intervalo(distribucion.getMinimo(), distribucion.getMaximo(), spnIntervalos.getValue().intValue());
             chi = new ChiCuadrado();
             chi.calcularEstadisticoPrueba(distribucion.calcularFo(intervalosChi), distribucion.calcularFe(intervalosChi), intervalosChi);
             intervalos = chi.getIntervalosAgrupados();
             frecuenciasO = chi.getFoAgrupados();
             frecuenciasE = chi.getFeAgrupados();
             estadisticos = chi.getEstadisticos();
+
+            System.out.println(Arrays.toString(distribucion.calcularFo(intervalosChi)));
+            System.out.println(Arrays.toString(distribucion.calcularFe(intervalosChi)));
         }
 
 
-        for (int i = 0; i < intervalos.size(); i++) {
+        for (int i = 0; i < frecuenciasO.size(); i++) {
             NumChi chicuadrado;
             chicuadrado = new NumChi(intervalos.get(i)
                     , String.valueOf(frecuenciasO.get(i))
@@ -296,43 +313,97 @@ public class Controller {
 
     }
 
+    public void reiniciar(ActionEvent actionEvent) throws IOException {
+        Stage nuevaVentana = new Stage();
+        Parent root = FXMLLoader.load(getClass().getResource("pantallaPrincipal.fxml"));
+        nuevaVentana.setTitle("UTN FRC - Simulación - TP3");
+        nuevaVentana.setScene(new Scene(root, 700, 750));
+        nuevaVentana.show();
+        Main.stage.close();
+        Main.stage = nuevaVentana;
+    }
 
-    public void mostrarHistograma(ActionEvent actionEvent) {
+    public void mostrarHistograma(ActionEvent actionEvent) throws Exception {
+        if (distribucionNum == 2)
+        {
+            Stage grafico = new Stage();
 
-        Stage grafico = new Stage();
-        CategoryAxis xAxis = new CategoryAxis();
-        xAxis.setLabel("Intervalos");
-        NumberAxis yAxis = new NumberAxis();
-        yAxis.setLabel("Frecuencias");
-        BarChart barChart = new BarChart(xAxis, yAxis);
-        XYChart.Series dataSeries1 = new XYChart.Series();
-        dataSeries1.setName("Fo");
-        barChart.getData().add(dataSeries1);
-        XYChart.Series dataSeries2 = new XYChart.Series();
-        dataSeries2.setName("Fe");
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.FLOOR);
+            // Definición de los ejes
+            CategoryAxis xAxis = new CategoryAxis();
+            xAxis.setLabel("Intervalos");
+
+            NumberAxis yAxis = new NumberAxis();
+            yAxis.setLabel("Frecuencias");
+
+            //Definición de la gráfica
+            BarChart barChart = new BarChart(xAxis, yAxis);
+
+            XYChart.Series dataSeries1 = new XYChart.Series();
+            dataSeries1.setName("Fo");
 
 
-//        for(int i = 0; i < this.chi.getIntervalos().length; ++i) {
-//            double extremoDerecho;
-//            if (i == 0) {
-//                extremoDerecho = new Double(df.format(this.chi.getIntervalos()[i]));
-//                dataSeries1.getData().add(new Data("[ 0.0, " + extremoDerecho + "]", this.chi.getFrecuenciasObservadas()[i]));
-//                dataSeries2.getData().add(new Data("[ 0.0, " + extremoDerecho + "]", this.chi.getFrecuenciasEsperadas()[i]));
-//            } else {
-//                double extremoIzquierdo = new Double(df.format(this.chi.getIntervalos()[i - 1]));
-//                extremoDerecho = new Double(df.format(this.chi.getIntervalos()[i]));
-//                dataSeries1.getData().add(new Data("[ " + extremoIzquierdo + ", " + extremoDerecho + "]", this.chi.getFrecuenciasObservadas()[i]));
-//                dataSeries2.getData().add(new Data("[ " + extremoIzquierdo + ", " + extremoDerecho + "]", this.chi.getFrecuenciasEsperadas()[i]));
-//            }
-//        }
+            barChart.getData().add(dataSeries1);
 
-        barChart.getData().add(dataSeries2);
-        VBox vbox = new VBox(new Node[]{barChart});
-        grafico.setTitle("Histograma");
-        grafico.setScene(new Scene(vbox, 600.0D, 400.0D));
-        grafico.show();
+            XYChart.Series dataSeries2 = new XYChart.Series();
+            dataSeries2.setName("Fe");
+
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.FLOOR);
+            double extremoIzquierdo;
+            double extremoDerecho;
+            for (int i = 0; i < distribucionPoisson.getValoresChi().size(); i++) {
+
+                dataSeries1.getData().add(new XYChart.Data(distribucionPoisson.getValoresChi().get(i).toString(), distribucionPoisson.getFo().get(i)));
+                dataSeries2.getData().add(new XYChart.Data(distribucionPoisson.getValoresChi().get(i).toString(), distribucionPoisson.getFe().get(i)));
+            }
+
+            barChart.getData().add(dataSeries2);
+
+            VBox vbox = new VBox(barChart);
+            grafico.setTitle("Histograma");
+            grafico.setScene(new Scene(vbox, 600, 400));
+            grafico.show();
+        }
+        else
+        {
+            Stage grafico = new Stage();
+
+            // Definición de los ejes
+            CategoryAxis xAxis = new CategoryAxis();
+            xAxis.setLabel("Intervalos");
+
+            NumberAxis yAxis = new NumberAxis();
+            yAxis.setLabel("Frecuencias");
+
+            //Definición de la gráfica
+            BarChart barChart = new BarChart(xAxis, yAxis);
+
+            XYChart.Series dataSeries1 = new XYChart.Series();
+            dataSeries1.setName("Fo");
+
+
+            barChart.getData().add(dataSeries1);
+
+            XYChart.Series dataSeries2 = new XYChart.Series();
+            dataSeries2.setName("Fe");
+
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.FLOOR);
+            double extremoIzquierdo;
+            double extremoDerecho;
+            for (int i = 0; i < intervalosChi.getCantIntervalos(); i++) {
+
+                dataSeries1.getData().add(new XYChart.Data(Arrays.toString(intervalosChi.getIntervalos()[i]), distribucion.calcularFo(intervalosChi)[i]));
+                dataSeries2.getData().add(new XYChart.Data(Arrays.toString(intervalosChi.getIntervalos()[i]), distribucion.calcularFe(intervalosChi)[i]));
+            }
+
+            barChart.getData().add(dataSeries2);
+
+            VBox vbox = new VBox(barChart);
+            grafico.setTitle("Histograma");
+            grafico.setScene(new Scene(vbox, 600, 400));
+            grafico.show();
+        }
     }
 
 }

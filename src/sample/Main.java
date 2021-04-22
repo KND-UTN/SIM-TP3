@@ -21,6 +21,7 @@ import javafx.stage.Stage;
  */
 
 public class Main extends Application {
+    static Stage stage;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -28,6 +29,7 @@ public class Main extends Application {
         primaryStage.setTitle("UTN FRC - Simulación - TP3");
         primaryStage.setScene(new Scene(root, 700.0D, 750.0D));
         primaryStage.show();
+        stage = primaryStage;
     }
 
 

@@ -1,6 +1,8 @@
 package pruebasBondad;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import Intervalo.Intervalo;
 
 
@@ -41,6 +43,7 @@ public class ChiCuadrado{
         double foAcumulada = 0;
         double feAcumulada = 0;
         ArrayList<double[]> intervalosAcumulados = new ArrayList<>();
+        ArrayList<double[]> intervalosAcumuladosAnterior = new ArrayList<>();
 
         for (int i=0; i < fe.length; i++)
         {
@@ -54,25 +57,23 @@ public class ChiCuadrado{
                 feAgrupados.add(feAcumulada);
                 intervalosAgrupados.add("[" + intervalosAcumulados.get(0)[0] + ", " + intervalosAcumulados.get(intervalosAcumulados.size() - 1)[1] + "]");
 
-                intervalosAgrupados.add(intervalosAgrupados.toString());
-
                 this.c.add(Math.pow(feAcumulada - foAcumulada, 2)/ feAcumulada);
                 cAc += c.get(c.size() -1);
 
                 feAcumulada = 0;
                 foAcumulada = 0;
+                intervalosAcumuladosAnterior = (ArrayList<double[]>) intervalosAcumulados.clone();
                 intervalosAcumulados = new ArrayList<>();
             }
         }
 
-        if (feAcumulada < 5)
+        if (feAcumulada > 0)
         {
             // Se van guardando los valores de foAc y feAc para luego mostrarlo en las tablas..
-            foAgrupados.add(foAcumulada);
-            feAgrupados.add(feAcumulada);
-            intervalosAgrupados.add("[" + intervalosAcumulados.get(0)[0] + ", " + intervalosAcumulados.get(intervalosAcumulados.size() - 1)[1] + "]");
-
-            intervalosAgrupados.add(intervalosAgrupados.toString());
+            System.out.println(foAgrupados);
+            foAgrupados.set(foAgrupados.size() - 1, foAgrupados.get(foAgrupados.size() - 1) + foAcumulada);
+            feAgrupados.set(feAgrupados.size() - 1, feAgrupados.get(feAgrupados.size() - 1) + feAcumulada);
+            intervalosAgrupados.set(intervalosAgrupados.size() - 1, "[" + intervalosAcumuladosAnterior.get(0)[0] + ", " + intervalosAcumulados.get(intervalosAcumulados.size() - 1)[1] + "]");
 
             this.c.add(Math.pow(feAcumulada - foAcumulada, 2)/ feAcumulada);
             cAc += c.get(c.size() -1);
