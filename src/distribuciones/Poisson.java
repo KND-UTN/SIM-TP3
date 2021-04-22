@@ -1,6 +1,5 @@
 package distribuciones;
 import org.apache.commons.math3.util.ArithmeticUtils;
-import java.math.BigInteger;
 import java.util.*;
 
 public class Poisson {
@@ -10,6 +9,21 @@ public class Poisson {
     Hashtable<Integer, Integer> frecuenciasObservadasTemporal;
     ArrayList<Integer> fo;
     ArrayList<Integer> fe;
+    double minimo = Integer.MAX_VALUE;
+    double maximo = 0;
+
+    double getMinimo(){return minimo;}
+
+    double getMaximo(){ return maximo;}
+
+    public ArrayList<Integer> getFo() {
+        return fo;
+    }
+
+    public ArrayList<Integer> getFe() {
+        return fe;
+    }
+
     ArrayList<Integer> valores;
 
     Random generadorAleatorios;

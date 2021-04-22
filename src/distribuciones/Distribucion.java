@@ -22,4 +22,9 @@ public interface Distribucion {
 
     // Metodo que retorna la cantidad de datos empiricos que tiene la distribucion
     public int getDatosEmpiricos();
+
+    public double getMinimo();
+
+    public double getMaximo();
+
 }

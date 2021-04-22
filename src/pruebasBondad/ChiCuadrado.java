@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import Intervalo.Intervalo;
 
 
-public class ChiCuadrado {
+public class ChiCuadrado{
     ArrayList<Double > c;    // Estadístico
     double cAc;             // Estadístico de prueba (C acumulado)
     double valorCritico;    // Si cAc (C acumulado) es mayor al valor crítico, es posible rechazar la hipótesis nula
@@ -24,14 +24,6 @@ public class ChiCuadrado {
         intervalosAgrupados = new ArrayList<>();
     }
 
-    public void procesar(double[] fo, double[] fe, int m, Intervalo intervalos)
-    {
-        // Obtenemos el estadístico acumulado
-        calcularEstadisticoPrueba(fo, fe, intervalos);
-        // Verificamos si se rechaza la hipótesis nula
-        testHipotesis(m);
-    }
-
     public ArrayList<Double> getFoAgrupados() {
         return foAgrupados;
     }
@@ -44,7 +36,7 @@ public class ChiCuadrado {
         return intervalosAgrupados;
     }
 
-    private void calcularEstadisticoPrueba(double[] fo, double[] fe, Intervalo intervalos)
+    public void calcularEstadisticoPrueba(double[] fo, double[] fe, Intervalo intervalos)
     {
         double foAcumulada = 0;
         double feAcumulada = 0;
@@ -88,7 +80,7 @@ public class ChiCuadrado {
     }
 
     // Método que verifica si se puede rechazar o no la hipótesis nula
-    private void testHipotesis(int m)
+    public void testHipotesis(int m)
     {
         int gradosLibertad = ((intervalosAgrupados.size() - 1) - m);
         // Con este alpha definimos que existe un riesgo de 5% de concluir que la muestra no se ajusta a la
@@ -103,6 +95,10 @@ public class ChiCuadrado {
 
         // Guardamos en la variable si es posible rechazar o no la hipótesis
         rechazada = !(valorCritico > cAc);
+    }
+
+    public ArrayList<Double> getEstadisticos() {
+        return c;
     }
 }
 

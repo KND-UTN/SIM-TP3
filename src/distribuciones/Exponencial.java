@@ -8,6 +8,9 @@ public class Exponencial implements Distribucion {
     Random generadorAleatorios;
     double rnd;
     double lambda;
+    double minimo = Integer.MAX_VALUE;
+    double maximo = 0;
+
 
     public Exponencial(double lambda) {
         this.lambda = lambda;
@@ -22,6 +25,8 @@ public class Exponencial implements Distribucion {
             rnd = generadorAleatorios.nextDouble();
             x = ( - 1 / lambda) * Math.log( 1 - rnd );
             valoresGenerados.add(x);
+            if(x > maximo) maximo = x;
+            if(x < minimo) minimo = x;
         }
         return valoresGenerados;
     }
@@ -32,6 +37,8 @@ public class Exponencial implements Distribucion {
         rnd = generadorAleatorios.nextDouble();
         x = ( - 1 / lambda) * Math.log( 1 - rnd );
         valoresGenerados.add(x);
+        if(x > maximo) maximo = x;
+        if(x < minimo) minimo = x;
         return x;
     }
 
@@ -71,6 +78,16 @@ public class Exponencial implements Distribucion {
     @Override
     public int getDatosEmpiricos() {
         return 1;
+    }
+
+    @Override
+    public double getMinimo() {
+        return minimo;
+    }
+
+    @Override
+    public double getMaximo() {
+        return maximo;
     }
 
 }
