@@ -84,14 +84,24 @@ public class Poisson {
         }
 
         Iterator<Map.Entry<Integer, Integer>> iterador = frecuenciasObservadasTemporal.entrySet().iterator();
-
-        int frecuenciaEsperada;
+        ArrayList<Integer> parClave = new ArrayList<>();
+        ArrayList<Integer> parValor = new ArrayList<>();
         while (iterador.hasNext())
         {
             Map.Entry<Integer, Integer> actual = iterador.next();
-            valores.add(actual.getKey());
-            fo.add(actual.getValue());
-            frecuenciaEsperada = (int) (Math.pow(lambda, actual.getKey()) * Math.exp(-lambda) / ArithmeticUtils.factorial(actual.getKey()) * valoresGenerados.size());
+            parClave.add(actual.getKey());
+            parValor.add(actual.getValue());
+        }
+
+        Collections.reverse(parClave);
+        Collections.reverse(parValor);
+
+        int frecuenciaEsperada;
+        for ( int i = 0 ; i < parClave.size() ; i++ )
+        {
+            valores.add(parClave.get(i));
+            fo.add(parValor.get(i));
+            frecuenciaEsperada = (int) (Math.pow(lambda, parClave.get(i)) * Math.exp(-lambda) / ArithmeticUtils.factorial(parClave.get(i)) * valoresGenerados.size());
             fe.add(frecuenciaEsperada);
         }
     }

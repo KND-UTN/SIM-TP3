@@ -29,18 +29,6 @@ public class ChiCuadrado {
         intervalosAgrupados = new ArrayList<>();
     }
 
-    public ArrayList<Double> getFoAgrupados() {
-        return foAgrupados;
-    }
-
-    public ArrayList<Double> getFeAgrupados() {
-        return feAgrupados;
-    }
-
-    public ArrayList<String> getIntervalosAgrupados() {
-        return intervalosAgrupados;
-    }
-
     public void calcularEstadisticoPrueba(double[] fo, double[] fe, Intervalo intervalos) {
         double foAcumulada = 0;
         double feAcumulada = 0;
@@ -104,6 +92,11 @@ public class ChiCuadrado {
         rechazada = !(valorCritico > cAc);
     }
 
+
+
+
+
+    // GETTERS
     public boolean isRechazada() {
         return rechazada;
     }
@@ -118,6 +111,18 @@ public class ChiCuadrado {
 
     public ArrayList<Double> getEstadisticos() {
         return c;
+    }
+
+    public ArrayList<Double> getFoAgrupados() {
+        return foAgrupados;
+    }
+
+    public ArrayList<Double> getFeAgrupados() {
+        return feAgrupados;
+    }
+
+    public ArrayList<String> getIntervalosAgrupados() {
+        return intervalosAgrupados;
     }
 }
 
