@@ -104,7 +104,6 @@ public class Controller {
     public Controller() {
     }
 
-    ;
 
     public void initialize() {
 
@@ -195,6 +194,7 @@ public class Controller {
     }
 
     public void botonProximoPresionado(ActionEvent actionEvent) {
+        // TODO: Resolver esto para el Poisson
         Double nuevoValor = this.distribucion.generarValorExtra();
         this.tblRandoms.getItems().add(new NumRandom(this.cantidadRandoms, String.valueOf((double) ((int) (nuevoValor * Math.pow(10.0D, (double) this.cantidadDecimales))) / Math.pow(10.0D, (double) this.cantidadDecimales))));
         ++this.cantidadRandoms;
@@ -296,36 +296,75 @@ public class Controller {
             frecuenciasO = chi.getFoAgrupados();
             frecuenciasE = chi.getFeAgrupados();
             estadisticos = chi.getEstadisticos();
-
-            System.out.println(Arrays.toString(distribucion.calcularFo(intervalosChi)));
-            System.out.println(Arrays.toString(distribucion.calcularFe(intervalosChi)));
         }
 
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.FLOOR);
+        Double estadistico;
+        Double foMuestra;
+        Double feMuestra;
 
         for (int i = 0; i < frecuenciasO.size(); i++) {
             NumChi chicuadrado;
+
+            estadistico = new Double(df.format(estadisticos.get(i)));
+            foMuestra = new Double(df.format(frecuenciasO.get(i)));
+            feMuestra = new Double(df.format(frecuenciasE.get(i)));
             chicuadrado = new NumChi(intervalos.get(i)
-                    , String.valueOf(frecuenciasO.get(i))
-                    , String.valueOf(frecuenciasE.get(i))
-                    , String.valueOf(estadisticos.get(i)));
+                    , String.valueOf(foMuestra)
+                    , String.valueOf(feMuestra)
+                    , String.valueOf(estadistico));
             tablaChi.getItems().add(chicuadrado);
         }
 
+
+        if (distribucionNum == 2) {
+            chiPoisson.testHipotesis(distribucionPoisson.getDatosEmpiricos());
+            String mensaje = "Resultado del Test: \n";
+            if (chiPoisson.isRechazada()) {
+                mensaje = mensaje + "Con " + (chiPoisson.getIntervalosAgrupados().size() - 1 - distribucionPoisson.getDatosEmpiricos()) + " grados de libertad, ";
+                mensaje = mensaje + " se obtuvo un valor calculado de " + chiPoisson.getcAc() + ", \nel cual es mayor ";
+                mensaje = mensaje + " al valor tabulado (" + chiPoisson.getValorCritico() + "), \npor lo que ";
+                mensaje = mensaje + " se rechaza la hipotesis nula.";
+                lblResultadoTest.setText(mensaje);
+            } else {
+                mensaje = mensaje + "Con " + (chiPoisson.getIntervalosAgrupados().size() - 1 - distribucionPoisson.getDatosEmpiricos()) + " grados de libertad, ";
+                mensaje = mensaje + " se obtuvo un valor calculado de " + chiPoisson.getcAc() + ", \nel cual es menor ";
+                mensaje = mensaje + " al valor tabulado (" + chiPoisson.getValorCritico() + "), \npor lo que ";
+                mensaje = mensaje + " no se rechaza la hipotesis nula.";
+                lblResultadoTest.setText(mensaje);
+            }
+        } else {
+            chi.testHipotesis(distribucion.getDatosEmpiricos());
+            String mensaje = "Resultado del Test: \n";
+            if (chi.isRechazada()) {
+                mensaje = mensaje + "Con " + (chi.getIntervalosAgrupados().size() - 1 - distribucion.getDatosEmpiricos()) + " grados de libertad, ";
+                mensaje = mensaje + " se obtuvo un valor calculado de " + chi.getcAc() + ", \nel cual es mayor ";
+                mensaje = mensaje + " al valor tabulado (" + chi.getValorCritico() + "), \npor lo que ";
+                mensaje = mensaje + " se rechaza la hipotesis nula.";
+                lblResultadoTest.setText(mensaje);
+            } else {
+                mensaje = mensaje + "Con " + (chi.getIntervalosAgrupados().size() - 1 - distribucion.getDatosEmpiricos()) + " grados de libertad, ";
+                mensaje = mensaje + " se obtuvo un valor calculado de " + chi.getcAc() + ", \nel cual es menor ";
+                mensaje = mensaje + " al valor tabulado (" + chi.getValorCritico() + "), \npor lo que ";
+                mensaje = mensaje + " no se rechaza la hipotesis nula.";
+                lblResultadoTest.setText(mensaje);
+            }
+        }
     }
 
     public void reiniciar(ActionEvent actionEvent) throws IOException {
         Stage nuevaVentana = new Stage();
         Parent root = FXMLLoader.load(getClass().getResource("pantallaPrincipal.fxml"));
         nuevaVentana.setTitle("UTN FRC - Simulación - TP3");
-        nuevaVentana.setScene(new Scene(root, 700, 750));
+        nuevaVentana.setScene(new Scene(root, 700, 850));
         nuevaVentana.show();
         Main.stage.close();
         Main.stage = nuevaVentana;
     }
 
     public void mostrarHistograma(ActionEvent actionEvent) throws Exception {
-        if (distribucionNum == 2)
-        {
+        if (distribucionNum == 2) {
             Stage grafico = new Stage();
 
             // Definición de los ejes
@@ -349,10 +388,7 @@ public class Controller {
 
             DecimalFormat df = new DecimalFormat("#.##");
             df.setRoundingMode(RoundingMode.FLOOR);
-            double extremoIzquierdo;
-            double extremoDerecho;
             for (int i = 0; i < distribucionPoisson.getValoresChi().size(); i++) {
-
                 dataSeries1.getData().add(new XYChart.Data(distribucionPoisson.getValoresChi().get(i).toString(), distribucionPoisson.getFo().get(i)));
                 dataSeries2.getData().add(new XYChart.Data(distribucionPoisson.getValoresChi().get(i).toString(), distribucionPoisson.getFe().get(i)));
             }
@@ -363,9 +399,7 @@ public class Controller {
             grafico.setTitle("Histograma");
             grafico.setScene(new Scene(vbox, 600, 400));
             grafico.show();
-        }
-        else
-        {
+        } else {
             Stage grafico = new Stage();
 
             // Definición de los ejes
@@ -392,9 +426,10 @@ public class Controller {
             double extremoIzquierdo;
             double extremoDerecho;
             for (int i = 0; i < intervalosChi.getCantIntervalos(); i++) {
-
-                dataSeries1.getData().add(new XYChart.Data(Arrays.toString(intervalosChi.getIntervalos()[i]), distribucion.calcularFo(intervalosChi)[i]));
-                dataSeries2.getData().add(new XYChart.Data(Arrays.toString(intervalosChi.getIntervalos()[i]), distribucion.calcularFe(intervalosChi)[i]));
+                extremoIzquierdo = new Double(df.format(intervalosChi.getIntervalos()[i][0]));
+                extremoDerecho = new Double(df.format(intervalosChi.getIntervalos()[i][1]));
+                dataSeries1.getData().add(new XYChart.Data("[ " + extremoIzquierdo + ", " + extremoDerecho + "]", distribucion.calcularFo(intervalosChi)[i]));
+                dataSeries2.getData().add(new XYChart.Data("[ " + extremoIzquierdo + ", " + extremoDerecho + "]", distribucion.calcularFe(intervalosChi)[i]));
             }
 
             barChart.getData().add(dataSeries2);
@@ -405,5 +440,4 @@ public class Controller {
             grafico.show();
         }
     }
-
 }

@@ -27,7 +27,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("pantallaPrincipal.fxml"));
         primaryStage.setTitle("UTN FRC - Simulación - TP3");
-        primaryStage.setScene(new Scene(root, 700.0D, 750.0D));
+        primaryStage.setScene(new Scene(root, 700.0D, 850));
         primaryStage.show();
         stage = primaryStage;
     }
