@@ -1,5 +1,6 @@
 package distribuciones;
-import org.apache.commons.math3.util.ArithmeticUtils;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class Poisson {
@@ -10,7 +11,7 @@ public class Poisson {
     ArrayList<Integer> fo;
     ArrayList<Integer> fe;
     double minimo = Integer.MAX_VALUE;
-    double maximo = 0;
+    double maximo = -Integer.MAX_VALUE;
     ArrayList<Integer> valores;
     Random generadorAleatorios;
 
@@ -72,7 +73,7 @@ public class Poisson {
         return valores;
     }
 
-    public void calcularFoFe() {
+    public void calcularFoFe() throws Exception {
 
         for (double valor: valoresGenerados)
         {
@@ -101,9 +102,34 @@ public class Poisson {
         {
             valores.add(parClave.get(i));
             fo.add(parValor.get(i));
-            frecuenciaEsperada = (int) (Math.pow(lambda, parClave.get(i)) * Math.exp(-lambda) / ArithmeticUtils.factorial(parClave.get(i)) * valoresGenerados.size());
+            double expLambda = Math.exp(-lambda);
+            BigDecimal bigX = new BigDecimal(parClave.get(i));
+            BigDecimal bigLambda = new BigDecimal(lambda);
+            BigDecimal lambdaExponencial = bigLambda.pow(parClave.get(i));
+            BigDecimal eulerExponencial = new BigDecimal(expLambda);
+            BigDecimal dividendo = lambdaExponencial.multiply(eulerExponencial);
+            BigDecimal divisor = factorial(bigX);
+            // 30 decimales, redondeo para arriba
+            BigDecimal division = dividendo.divide(divisor, 30, RoundingMode.HALF_UP);
+            BigDecimal multiplicador = new BigDecimal(valoresGenerados.size());
+            BigDecimal multiplicacion = division.multiply(multiplicador);
+            System.out.println("------");
+            System.out.println("lambdaExponencial: " + lambdaExponencial);
+            System.out.println("eulerExponencial: " + eulerExponencial);
+            System.out.println("Dividendo: " + dividendo);
+            System.out.println("------");
+            frecuenciaEsperada = multiplicacion.intValue();
             fe.add(frecuenciaEsperada);
         }
+    }
+
+    // Metodo para calcular factoriales de un numero
+    private static BigDecimal factorial(BigDecimal entrada) throws Exception {
+        if (entrada.compareTo(new BigDecimal(2)) > 0) return entrada.multiply(factorial(entrada.subtract(BigDecimal.ONE)));
+        if (entrada.intValue() == 2) return new BigDecimal(2);
+        if (entrada.intValue() == 1) return new BigDecimal(1);
+        if (entrada.intValue() == 0) return new BigDecimal(1);
+        throw new Exception("Valores negativos...");
     }
 
     @Override

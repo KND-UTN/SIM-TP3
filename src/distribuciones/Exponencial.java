@@ -9,7 +9,7 @@ public class Exponencial implements Distribucion {
     double rnd;
     double lambda;
     double minimo = Integer.MAX_VALUE;
-    double maximo = 0;
+    double maximo = -Integer.MAX_VALUE;
 
 
     public Exponencial(double lambda) {

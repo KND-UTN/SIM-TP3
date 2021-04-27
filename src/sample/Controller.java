@@ -103,11 +103,11 @@ public class Controller {
 
     public void initialize() {
 
-        this.spnMedia.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 2147483647));
-        this.spnDes.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 2147483647));
-        this.spnA.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 2147483647));
-        this.spnLambda.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 2147483647));
-        this.spnB.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 2147483647));
+        this.spnMedia.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-2147483647, 2147483647, 0));
+        this.spnDes.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-2147483647, 2147483647, 0));
+        this.spnA.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-2147483647, 2147483647, 0));
+        this.spnLambda.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-2147483647, 2147483647, 0));
+        this.spnB.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-2147483647, 2147483647, 0));
         this.spnCant.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 2147483647));
         this.spnIntervalos.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 2147483647));
         this.spnConfianza.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0D, 1.0D, 0.95D, 0.01D));
