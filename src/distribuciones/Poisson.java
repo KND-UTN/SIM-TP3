@@ -28,7 +28,6 @@ public class Poisson {
     }
 
 
-
     public Poisson(double lambda)
     {
         this.lambda = lambda;
@@ -57,12 +56,27 @@ public class Poisson {
                 x = x + 1;
             }
             valoresGenerados.add((int) x);
+
+            if(x > maximo) maximo = x;
+            if(x < minimo) minimo = x;
         }
         return valoresGenerados;
     }
 
     public double generarValorExtra() {
-        return 0;
+        double U;
+        double P = 1;
+        double A = Math.exp(-lambda);
+        double x = -1;
+        while (P >= A ){
+            U = Math.random();
+            P = P * U;
+            x = x + 1;
+        }
+        valoresGenerados.add((int) x);
+        if(x > maximo) maximo = x;
+        if(x < minimo) minimo = x;
+        return (int) x;
     }
 
     public ArrayList<Integer> getValores() {
@@ -132,14 +146,7 @@ public class Poisson {
         throw new Exception("Valores negativos...");
     }
 
-    @Override
-    public double[] calcularFe(Intervalo intervalos) throws Exception {
-        return null;
-    }
-
-    @Override
     public int getDatosEmpiricos() {
-        return 0;
-        // TODO: Corregir esto, Poisson NO tiene 0 datos empiricos (Creo) - Igna
+        return 1;
     }
 }

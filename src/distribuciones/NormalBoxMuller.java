@@ -10,6 +10,8 @@ public class NormalBoxMuller implements Distribucion {
     Random generadorAleatorios;
     double rnd1;
     double rnd2;
+    double minimo = Integer.MAX_VALUE;
+    double maximo = -Integer.MAX_VALUE;
 
     public NormalBoxMuller(double desviacion, double media) {
         this.desviacion = desviacion;
@@ -30,6 +32,8 @@ public class NormalBoxMuller implements Distribucion {
                 x = (Math.sqrt(-2 * Math.log(rnd1)) * Math.sin(2 * Math.PI * rnd2)) * desviacion + media;
             }
             valoresGenerados.add(x);
+            if(x > maximo) maximo = x;
+            if(x < minimo) minimo = x;
         }
         return valoresGenerados;
     }
@@ -45,7 +49,8 @@ public class NormalBoxMuller implements Distribucion {
             x = (Math.sqrt(-2 * Math.log(rnd1)) * Math.sin(2 * Math.PI * rnd2)) * desviacion + media;
         }
         valoresGenerados.add(x);
-
+        if(x > maximo) maximo = x;
+        if(x < minimo) minimo = x;
         return x;
     }
 
@@ -86,4 +91,15 @@ public class NormalBoxMuller implements Distribucion {
     public int getDatosEmpiricos() {
         return 2;
     }
+
+    @Override
+    public double getMinimo() {
+        return minimo;
+    }
+
+    @Override
+    public double getMaximo() {
+        return maximo;
+    }
+
 }
